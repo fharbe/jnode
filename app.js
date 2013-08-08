@@ -1,55 +1,51 @@
-(function() {
-	_$ = {
-		o: [],
+$ = function(selector, context) {
+	return ($ = {
 		init: function(selector, context) {
 			// domelement && all other queries | modern browsers only!
-			// no function so its a string or undefined / null => return _$
+			// no function so its a string or undefined / null => return $
 			// next set the objects to a new Array
 			// if its a DOMnode, add it to the Objects Array
 			// if no context is defined, set context to document
 			// use querySelectorAll to get classes, ids etc.
-			// if this is true, return the _$ Object else it is a function so return the _$.ready(selector)
-			return !_$.isfn(selector) && (selector.nodeType && (_$.o = []).push(selector) || (_$.o = (!context ? document : context).querySelectorAll(selector))) ? _$ : _$.ready(selector);
+			// if this is true, return the $ Object else it is a function so return the $.ready(selector)
+			return !$.isfn(selector) && (selector.nodeType && ($.O = []).push(selector) || ($.O = (!context ? document : context).querySelectorAll(selector))) ? $ : $.ready(selector);
 		},
 		ready: function(fn) {
-			dcl = 'DOMContentLoaded';
-			fire = function() {
-				// unbind the listeners
-				!$(document).unbind(dcl, fire) && (window.onload = null);
+			// dual bind the "fire" function
+			var dcl = 'DOMContentLoaded';
+			$.init(document).bind(dcl, onload = function() {
+				$.init(document).unbind(dcl, onload = null);
 				// using call like jquery
-				fn.call(_$, $);
-			};
-			// if its not available use window.onload
-			!$(document).bind(dcl, fire) && (window.onload = fire);
+				fn.call($, $.init);
+			});
 		},
 		isfn: function(fn) {
 			// not jquery like, but works ;)
-			return typeof fn === 'function';
+			return typeof fn == 'function';
 		},
 		each: function(fn) {
 			// adapted from jquery
-			for (i = 0; i < _$.o.length; i++) { fn.call(_$.o[i], i); }
+			for (var i = 0; i < $.O.length; i++) {
+				fn.call(i, $.O[i]);
+			}
 		},
 		attr: function(name, val) {
-			_$.each(function() {
-				// maybe not right here to return each time, but works with single nodes
-				o = this;
-				return val && o.setAttribute(name, val) ? _$ : o.getAttribute(name);
+			$.each(function(c) {
+				c.setAttribute(name, val)
 			});
+			return $;
 		},
 		bind: function(e, fn) {
-			_$.each(function() {
-				// test if its available else return false / 0 (to use window.onload...)
-				return ((o = this).add = o.addEventListener) && o.add(e, fn, 0) ? _$ : 0;
+			$.each(function(c) {
+				(c.add = c.addEventListener) && c.add(e, fn, 0);
 			});
+			return $;
 		},
 		unbind: function(e, fn) {
-			_$.each(function() {
-				// test if its available else return false / 0 (to use window.onload...)
-				return ((o = this).rm = o.removeEventListener) && o.rm(e, fn, 0) ? _$ : 0;
+			$.each(function(c) {
+				(c.rm = c.removeEventListener) && c.rm(e, fn, 0);
 			});
+			return $;
 		}
-	};
-	// haha too simple...
-	$ = _$.init;
-})();
+	}).init(selector, context);
+};
