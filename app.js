@@ -22,36 +22,16 @@ $ = function(cb) {
 				this.setAttribute(name, val);
 			});
 		},
-		bind: (function() {
-			if (document.addEventListener) {
-				return function(e, cb) {
-					return $.each(function() {
-						this.addEventListener(e, cb, 0);
-					});
-				};
-			} else {
-				return function(e, cb) {
-					return $.each(function() {
-						this.attachEvent('on' + e, cb);
-					});
-				};
-			}
-		})(),
-		unbind: (function() {
-			if (document.addEventListener) {
-				return function(e, cb) {
-					return $.each(function() {
-						this.removeEventListener(e, cb, 0);
-					});
-				};
-			} else {
-				return function(e, cb) {
-					return $.each(function() {
-						this.detachEvent('on' + e, cb);
-					});
-				};
-			}
-		})()
+		bind: function(e, cb) {
+			return $.each(function() {
+				(this.a = this.addEventListener) && this.a(e, cb, 0) || (this.a = this.attachEvent) && this.a('on' + e, cb);
+			});
+		},
+		unbind: function(e, cb) {
+			return $.each(function() {
+				(this.r = this.removeEventListener) && this.r(e, cb, 0) || (this.r = this.detachEvent) && this.r('on' + e, cb);
+			});
+		}
 	};
 	$.init(document).bind(dcl, onload = function() {
 		// no need for $.init(document) because the node is already in $.O
